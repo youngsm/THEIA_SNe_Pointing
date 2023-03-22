@@ -11,7 +11,7 @@ nubar at `"/nfs/disk1/youngsam/sims/2023-03-21_SNe/`. For each SNe there are two
 `unpack_<number>.h5` and `recon_<number>.h5`. The former is data from `brody`'s unpacker
 module, the latter is the salient data saved in the macro:
 
-E.g.,
+I.e.,
 
 ```sh
 /nfs/disk1/youngsam/sims/2023-03-21_SNe/recon_000000.h5
