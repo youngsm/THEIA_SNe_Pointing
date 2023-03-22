@@ -19,8 +19,9 @@ from brody.misc_utils import (THEIA_HEIGHT_50KT, THEIA_RADIUS_50KT, random_pos,
                               refractive_index_short)
 from brody.reconstruction import PromptDirectionStaged
 from brody.unpack import Unpack
-from eEs_generator import generator
+from eES_Gen.eEs_generator import eES_Gen
 
+generator = eES_Gen(seed=1234)
 FolderName = "2023-03-21_SNe"
 
 def __configure__(db):
