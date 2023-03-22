@@ -1,5 +1,7 @@
 # THEIA_SNe_Pointing
 
+![recon_000005](images/recon_000005.jpg)
+
 ## Files:
 
 * `reconstruct_supernovae.py`: pyrat macro for simulating SNe in a 50 kT THEIA.
