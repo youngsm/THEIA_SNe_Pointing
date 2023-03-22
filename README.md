@@ -24,3 +24,17 @@ I.e.,
     sn_direction: 3 entries, dtype: float64
     truth: 655 × 7 entries, dtype: float64
 ```
+
+The `flavor` dataset is the neutrino flavor as an enum. Specific mappings between the enum
+and the true flavor is in the `flavor_map.json` file:
+
+```json
+{
+    "nue": 0,
+    "nuebar": 1,
+    "numu": 2,
+    "numubar": 3,
+    "nutau": 4,
+    "nutaubar": 5
+}
+```
