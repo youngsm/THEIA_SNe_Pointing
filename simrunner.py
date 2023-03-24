@@ -3,6 +3,7 @@ from glob2 import glob
 import re
 import argparse
 from sys import argv
+from reconstruct_supernovae import FolderName
 
 def get_gpuid():
     gpu_id = None
@@ -14,7 +15,7 @@ def get_gpuid():
 
 def main():
 
-    out_dir = "/home/youngsam/portal/sims/2023-03-21_SNe"
+    out_dir = f"/home/youngsam/portal/sims/{FolderName}"
     cmd = "pyrat reconstruct_supernovae.py"
     
     if (gpuid:=get_gpuid()):
