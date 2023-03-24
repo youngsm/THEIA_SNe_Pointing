@@ -6,6 +6,7 @@ import json
 
 import h5py
 import numpy as np
+import scipy.stats
 from chroma.cache import Cache, GeometryNotFoundError
 from chroma.event import Vertex
 from chroma.loader import load_geometry_from_string
@@ -19,10 +20,14 @@ from brody.misc_utils import (THEIA_HEIGHT_50KT, THEIA_RADIUS_50KT, random_pos,
                               refractive_index_short)
 from brody.reconstruction import PromptDirectionStaged
 from brody.unpack import Unpack
-from eES_Gen.eEs_generator import eES_Gen
 
-generator = eES_Gen(seed=1234)
-FolderName = "2023-03-21_SNe"
+# NOTE: I copied over the eES_Gen class from 
+# https://github.com/JamesJieranShen/eES_Gen
+# to the `generator` folder
+from generator.eEs_generator import eES_Gen
+
+generator = eES_Gen()
+FolderName = "2023-03-23_SNe"
 
 def __configure__(db):
     
@@ -75,7 +80,6 @@ def __configure__(db):
     db.dichroic_sp = db.EdmundDichroicShortpassWater
     db.absorb_lp = db.KnightAbsorbingLongpassWater
     
-    db.nueES_RATE = 655  # https://snoplus.phy.queensu.ca/about/supernova-neutrinos.html
     db.SNE_DIR = random_three_vector()
 
 
@@ -134,9 +138,15 @@ def __define_geometry__(db):
     return det
 
 def __event_generator__(db):
-    for _ in trange(db.nueES_RATE, desc="Generating supernova events", 
+    db.nueES_RATE_MEAN  = 478.7188           # from SNe_recon.ipynb
+    db.nueES_RATE_SIGMA = 6.629323235444173
+
+    # sample from a Gaussian distribution
+    nueES_RATE = scipy.stats.norm.rvs(db.nueES_RATE_MEAN, db.nueES_RATE_SIGMA).astype(int)
+    for _ in trange(nueES_RATE, desc="Generating supernova events", 
                     leave=False, ncols=80, position=2):
-        event = generator.genEvent(db.SNE_DIR, eThreshold=0., nuThreshold=1.)
+        event = generator.genEvent(db.SNE_DIR, eThreshold=1., nuThreshold=2.)
+
         db.SNe_events.append([event['flavor'],
                               event['nuEnergy'],
                               event['sn_direction'],
@@ -149,8 +159,6 @@ def __event_generator__(db):
                      event['eKE'],
                      t0=0)
 
-
-
 def __simulation_start__(db):
     """Called at the start of the event loop"""
     db.ev_idx = 0
@@ -158,7 +166,7 @@ def __simulation_start__(db):
     
     db.t_sim_start = timer()
 
-    db.out_dir = Path("~/portal/sims").expanduser() / FolderName
+    db.out_dir = Path("/nfs/disk1/youngsam/sims").expanduser() / FolderName
     db.out_dir.mkdir(parents=True, exist_ok=True)
     print("created", db.out_dir)
     unpack_fmt = lambda x: f"unpack_{str(x).zfill(6)}.h5"
